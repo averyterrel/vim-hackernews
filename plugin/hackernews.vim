@@ -8,19 +8,19 @@
 "  Version: 0.1.1
 
 
-if !has('python')
+if !has('python3')
     echo "HackerNews.vim Error: Requires Vim compiled with +python"
     finish
 endif
 
 
 " Import Python code
-execute "python import sys"
-execute "python sys.path.append('" . expand("<sfile>:p:h") . "')"
-execute "python from hackernews import hacker_news, hacker_news_link"
+execute "python3 import sys"
+execute "python3 sys.path.append('" . expand("<sfile>:p:h") . "')"
+execute "python3 from hackernews import hacker_news, hacker_news_link"
 
 
-command! HackerNews python hacker_news()
+command! HackerNews python3 hacker_news()
 
 
 au! BufRead,BufNewFile *.hackernews set filetype=hackernews

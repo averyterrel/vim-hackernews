@@ -10,11 +10,11 @@
 #  Version: 0.1.1
 
 
-import HTMLParser
+import html.parser
 import json
 import re
 import textwrap
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import vim
 import webbrowser
 
@@ -31,11 +31,11 @@ def bwrite(s):
 
     # Vim buffer.append() cannot accept unicode type,
     # must first encode to UTF-8 string
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         s = s.encode('utf-8', errors='replace')
 
     # Code block markers for syntax highlighting
-    if s and s[-1] == unichr(160).encode('utf-8'):
+    if s and s[-1] == chr(160).encode('utf-8'):
         b[-1] = s
         return
 
@@ -55,8 +55,8 @@ def hacker_news():
     bwrite("└───┘")
     bwrite("")
 
-    news1 = json.loads(urllib2.urlopen(API_URL+"/news").read())
-    news2 = json.loads(urllib2.urlopen(API_URL+"/news2").read())
+    news1 = json.loads(urllib.request.urlopen(API_URL+"/news").read())
+    news2 = json.loads(urllib.request.urlopen(API_URL+"/news2").read())
     for i, item in enumerate(news1+news2):
         if 'title' not in item:
             continue
@@ -92,7 +92,7 @@ def hacker_news_link(external=False):
             browser = webbrowser.get()
             browser.open("https://news.ycombinator.com/item?id="+id)
             return
-        item = json.loads(urllib2.urlopen(API_URL+"/item/"+id).read())
+        item = json.loads(urllib.request.urlopen(API_URL+"/item/"+id).read())
         vim.command("edit .hackernews")
         bwrite("%s (%s)" % (item['title'], item['domain']))
         bwrite("%d points by %s %s | %d comments"
@@ -134,7 +134,7 @@ def hacker_news_link(external=False):
                 browser = webbrowser.get()
                 browser.open("https://news.ycombinator.com/item?id="+id)
                 return
-            item = json.loads(urllib2.urlopen(API_URL+"/item/"+id).read())
+            item = json.loads(urllib.request.urlopen(API_URL+"/item/"+id).read())
             vim.command("edit .hackernews")
             bwrite(item['title'])
             bwrite("Posted %s by %s" % (item['time_ago'], item['user']))
@@ -151,7 +151,7 @@ def hacker_news_link(external=False):
             browser.open(url)
             return
         vim.command("edit .hackernews")
-        content = urllib2.urlopen(MARKDOWN_URL+url).read()
+        content = urllib.request.urlopen(MARKDOWN_URL+url).read()
         for i, line in enumerate(content.split('\n')):
             if not line:
                 bwrite("")
@@ -161,10 +161,10 @@ def hacker_news_link(external=False):
                 bwrite(wrap)
         return
 
-    print "HackerNews.vim Error: Could not parse [item id]"
+    print("HackerNews.vim Error: Could not parse [item id]")
 
 
-html = HTMLParser.HTMLParser()
+html = html.parser.HTMLParser()
 
 
 def print_comments(comments):
@@ -206,10 +206,10 @@ def print_comments(comments):
                                      subsequent_indent=" "*4*level)
             for line in contents:
                 if line.find("!CODE!") >= 0:
-                    bwrite(" "*4*level + unichr(160))
+                    bwrite(" "*4*level + chr(160))
                     for c in code.split("\n"):
                         bwrite(" "*4*level + c)
-                    bwrite(" "*4*level + unichr(160))
+                    bwrite(" "*4*level + chr(160))
                     line = " "*4*level + line.replace("!CODE!", "").strip()
                 if line.strip():
                     bwrite(line)
