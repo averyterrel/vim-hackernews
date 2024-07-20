@@ -9,7 +9,6 @@
 
 
 if !has('python3')
-    echo "HackerNews.vim Error: Requires Vim compiled with +python"
     finish
 endif
 
